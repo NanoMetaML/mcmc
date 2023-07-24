@@ -9,7 +9,7 @@ def read(filename):
 
 
 setup(
-    name='nanometaml',
+    name='mcmc',
     version='0.0.1',
     author='Alexnder Nano',
     author_email='wilso692@purdue.edu',
