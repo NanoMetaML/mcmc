@@ -1,5 +1,3 @@
-all:
-	python ./test/t1_priors.py 
 
 env:
 	python -m venv env
@@ -8,16 +6,16 @@ env:
 	pip install -e .
 
 test1:
-	python ./test/t1_priors.py
+	python ./test/t1_MCMC/t1_priors.py
 
 test2:
-	python ./test/t2_uniform_MCMC.py
+	python ./test/t1_MCMC/t2_uniform_MCMC.py
 
 test3:
-	python ./test/t3_uniform_MCMC_process.py
+	python ./test/t1_MCMC/t3_uniform_MCMC_process.py
 
 test4:
-	python ./test/t4_uniform_MCMC_spectral_gap.py
+	python ./test/t1_MCMC/t4_uniform_MCMC_spectral_gap.py
 
 test5:
-	python ./test/t5_uniform_MCMC_plot.py
+	python ./test/t1_MCMC/t5_uniform_MCMC_plot.py

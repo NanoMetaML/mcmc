@@ -3,6 +3,14 @@ import itertools
 import functools
 
 
+def boltzmannFactor(s, s_p, energy_fn):
+    return torch.exp(energy_fn(s_p) - energy_fn(s))
+
+
+def absBoltzmanFactor(s, s_p, energy_fn):
+    return torch.exp(torch.abs(energy_fn(s_p) - energy_fn(s)))
+
+
 def quboEnergy(x, H):
     """
     Computes the energy for the specified Quadratic Unconstrained Binary Optimization (QUBO) system.
@@ -77,9 +85,6 @@ def partition_fn(energy_fn, num_spins, basis=[0, 1]):
         torch.Tensor : Energy vector of size (2**num_spins) that holds the energy of all configurations of the system.
     """
     # Generate all configurations
-    print(basis)
-    print(num_spins)
-    print(itertools.product(basis, repeat=num_spins))
     configurations = torch.FloatTensor(list(itertools.product(basis, repeat=num_spins)))
 
     # Query energy function on all configurations
