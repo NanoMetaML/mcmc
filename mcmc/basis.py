@@ -1,10 +1,11 @@
 import enum
 import torch
+from .polynomial import Polynomial
+
 
 class Basis(enum.Enum):
     spin = 1
     standard = 2
-
 
 def spinVToStandard(spin):
     return 2 * spin - 1
@@ -52,20 +53,21 @@ def standardQuadtoSpinQuad(standardP):
             H_2 =     sum_{i,j} J_{ij} / 4 * Z_i * Z_j
 
     """
+    Q = standardP.tensors[2]
+    h = standardP.tensors[1]
+    c = standardP.tensors[0]
 
-    H_1 = torch.sum(standardP) / 4
-    H_4 = torch.sum(standardh) / 2
+    H_1 = torch.sum(Q) / 4
+    H_4 = torch.sum(h) / 2
+    H_3 = torch.sum(Q, dim=1) / 4 + torch.sum(h, dim=0).T / 4 
+    H_5 = h / 2
 
-    H_3 = torch.sum(standardP, dim=1) / 4 + torch.sum(standardH, dim=0).T / 4 
-    H_5 = standardh / 2
+    H_2 = Q / 4
 
-    H_2 = standardP / 4
-
-    c = H_1 + H_4
-    l = H_3 + H_5
-    q = H_2
-
-
-    return c, l, q
-
-
+    return Polynomial(
+        [
+        c + H_1 + H_4,
+        H_3 + H_5,
+        H_2
+        ],
+        Basis.spin)

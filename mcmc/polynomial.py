@@ -12,6 +12,13 @@ class Polynomial(torch.nn.Module):
         return x
 
 def poly(x, T):
+    s = T[0]
+    for t in T:
+        s = s + polyD(x, t)
+    return s
+
+
+def polyD(x, T):
     """
     Computes the polynomial given by tensor T acting on input vector x
 
