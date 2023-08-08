@@ -3,20 +3,15 @@ import random
 import functools
 import enum
 
-from .flips import 
-
-class Basis(enum.Enum):
-    spin = 1
-    standard = 2
+from . import flipFns
+from .basis import Basis
 
 # ---------------------------- SAMPLER FUNCTION BUILDER ---------------------------- #
 # The following function is a builder function that takes in a flip function and returns a sampler function
-def samplerFromFlipBuilder(
+def buildSampleFnFromFlipFn(
                     x,                              # input tensor
                     flip_fn,                        # flip function
                     basis: Basis = Basis.standard,  # basis of the input tensor
-                    grad: bool = False,             # whether to allow gradient 
-                                                    # to flow through the flip
                     **kwargs                        # keyword arguments for flip_fn
                     ):
     """
@@ -24,9 +19,6 @@ def samplerFromFlipBuilder(
     """
 
     x_flip = flip_fn(x, **kwargs)
-
-    if grad == False:
-        x_flip = x_flip.detach()
 
     if basis == Basis.spin:
         x_noisy = x * (1 - x_flip) + (-1) * x * x_flip
@@ -41,7 +33,7 @@ def samplerFromFlipBuilder(
     return x_noisy
 
 
-def samplerToFlipBuilder(
+def buildFlipFnFromSampleFn(
                     x,                              # input tensor
                     sampler_fn,                     # sample function
                     **kwargs                        # keyword arguments for flip_fn
@@ -50,15 +42,13 @@ def samplerToFlipBuilder(
         Builds a flip function that applies the output of a sampler function to a tensor x
     """
 
-    x_new = sampler_fn(x_s, **kwargs)
+    x_new = sampler_fn(x, **kwargs)
 
-    return torch.abs(torch.sign(x_new - x_s)) 
+    return torch.abs(torch.sign(x_new - x)) 
 
 
-def buildNoisySamplerFn(
-                    x,                              # input tensor
+def buildNoisySampleFn(
                     sampler_fn,                     # sample function
-                    detach: bool = False,           # whether to detach the output
                     basis: Basis = Basis.standard,  # basis of the input tensor
                     **kwargs                        # keyword arguments for flip_fn and sampler_fn
                     ):
@@ -66,47 +56,50 @@ def buildNoisySamplerFn(
         Builds a sampler function that adds noise onto x such that x_{t} = f(x_{t-1})
     """
     flip_fn = functools.partial(
-        samplerToFlipBuilder,
+        buildFlipFnFromSampleFn,
         sampler_fn=sampler_fn,  # sample function
         **kwargs)               # keyword arguments for flip_fn
 
-    return functools.partial(samplerFromFlipBuilder,
-                             detach=detach,
+    return functools.partial(buildSampleFnFromFlipFn,
                              basis=basis,
                              flip_fn=flip_fn)
 
 
-# ---------------------------- SAMPLER FUNCTIONS ---------------------------- #
+# ---------------------------- SAMPLE FUNCTIONS ---------------------------- #
 
-biasedFlipCategoricalSampler = functools.partial(
-    samplerFromFlipBuilder, flip_fn=categoricalFlip
+sampleBiasedFlipCategorical = functools.partial(
+    buildSampleFnFromFlipFn, flip_fn=flipFns.categoricalFlip
 )
 
 
-unbiasedFlipChooseKSampler = functools.partial(
-    samplerFromFlipBuilder, flip_fn=uniformPermFlip
+sampleFlipChooseK = functools.partial(
+    buildSampleFnFromFlipFn, flip_fn=flipFns.uniformPermFlip
 )
 
 
-def biasedUniformSampler(x, bias=0.5, grad: bool = False, **kwargs):
+def sampleBiasedUniform(x, bias=0.5, basis = Basis.standard, **kwargs):
     """
         Samples a biased bernoulli distribution over the 
         tensor shape.
     """
-    return torch.bernoulli(torch.oneslike(x) * bias)
+    if basis == Basis.spin:
+        
+        return torch.bernoulli(torch.ones_like(x) * bias) * 2 - 1
+
+    return torch.bernoulli(torch.ones_like(x) * bias)
 
 
-biasedCategoricalSampler.__doc__ = """
+sampleBiasedFlipCategorical.__doc__ = """
         Sampler function that applies a biased categorical flip to a tensor x. 
         Randomly chooses a single bit along the last dimension and flips it
         with probability p_0 if the bit is 0 and p_1 if the bit is 1.
         Parameters:
             x: input tensor
             bias: bias of the bernoulli distribution
-            grad: whether to allow gradient to flow through the flip
     """
 
-uniformChooseKSampler.__doc__ = """
+
+sampleFlipChooseK.__doc__ = """
         Sampler function that applies a uniform choose k flip to a tensor x.
         Randomly chooses k bits along the last dimension and flips them.
     """

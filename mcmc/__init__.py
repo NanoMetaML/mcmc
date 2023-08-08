@@ -1,1 +1,4 @@
-from . import binarypriors, energy_fn, mcmc, flips, measure, updaterules
+from . import basis, samplers, binaryPriors, energyFns, mcmc, flipFns, measure, updateRules, acceptanceRules, polynomial
+from .mcmc import MCMCLayer as MCMC
+from .basis import Basis
+

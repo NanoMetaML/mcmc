@@ -36,9 +36,9 @@ def categoricalFlip(x, p_0=0.1, p_1=0.1):
 
 def uniformPermFlip(x, k):
     """
-        Returns a flip tensor to flip k bits uniformly along the batch dimension
+        Returns a flip tensor to flip k bits uniformly along last dimension
     """
-    randPerm = torch.randperm(x.shape[2])[:k]
+    randPerm = torch.randperm(x.shape[-1])[:k]
     x_flip = torch.zeros_like(x)
     x_flip[:, randPerm] = 1
     return x_flip
