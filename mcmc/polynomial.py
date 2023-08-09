@@ -11,10 +11,17 @@ class Polynomial(torch.nn.Module):
             x = poly(x, tensor)
         return x
 
+    def __getitem__(self, idx):
+        return self.tensors[idx]
+
+    def __len__(self):
+        return len(self.tensors)
+
 def poly(x, T):
     s = T[0]
-    for t in T:
-        s = s + polyD(x, t)
+    if len(T) > 1:
+        for t in T[1:]:
+            s = s + polyD(x, t)
     return s
 
 
