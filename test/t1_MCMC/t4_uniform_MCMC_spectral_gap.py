@@ -14,7 +14,6 @@ def main():
             p = data[data_run][temperature]
             p = p.numpy()
             w, v = scipy.linalg.schur(p)
-            print(w)
             w = numpy.sort(w)
             spectral_gap[data_run][temperature] = 1 - max(w[w != 1])
 
