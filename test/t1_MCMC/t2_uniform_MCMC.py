@@ -44,7 +44,7 @@ def main(n, init_s_prior, quboPrior, getProposal, sampleAccept, temps):
 
     data = {}
 
-    for run_idx in range(1):
+    for run_idx in range(10):
 
         H, energy_fn = quboPrior(n)
 
@@ -56,7 +56,7 @@ def main(n, init_s_prior, quboPrior, getProposal, sampleAccept, temps):
         for temperature in temps:
             print(f"QUBO: {run_idx} Temperature: {temperature}" )
 
-            s = init_s_prior() #s is uniform binary prior                           
+            s = init_s_prior()                          
 
             data[run_idx][temperature] = {
                 's': [s],
@@ -64,13 +64,13 @@ def main(n, init_s_prior, quboPrior, getProposal, sampleAccept, temps):
             }
 
             energy_fn =  functools.partial(mcmc.energyFns.quboEnergy, H = H / temperature)
-            for sample_idx in range(1000):
-                s_p = getProposal(s=s) #proposal is uniform prior. Just creating another random binary vector
+            for sample_idx in range(100):
+                s_p = getProposal(s=s)
                 s = sampleAccept(s, s_p, energy_fn)
                 data[run_idx][temperature]['s'].append(s)
                 data[run_idx][temperature]['energy'].append(energy_fn(s, H=H))
     # Save
-    torch.save(data, 'test/data/t2_uniform_MCMC.pt')
+    torch.save(data,'test/data/t2_uniform_MCMC.pt')
     visualize_data('test/data/t2_uniform_MCMC.pt')
 
 def visualize_data(filename):
