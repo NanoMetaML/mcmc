@@ -30,7 +30,7 @@ def acceptancesampler(s, s_p, energy_fn):
 
 def quboPrior(n):
     H = torch.rand(n, n)
-    energy_fn = functools.partial(mcmc.energy_fn.quboEnergy, H = H)
+    energy_fn = functools.partial(mcmc.energyFns.quboEnergy, H = H)
     return H, energy_fn
 
 # Simple MCMC sampler
@@ -43,7 +43,7 @@ def main(n, init_s_prior, quboPrior, getProposal, sampleAccept, temps):
         H, energy_fn = quboPrior(n)
 
         data[run_idx] = {
-            'spectral_gap': mcmc.energy_fn.spectralGap(energy_fn, n),
+            'spectral_gap': mcmc.energyFns.spectralGap(energy_fn, n),
             'probleminstance': [H, energy_fn],
         }
 
@@ -56,7 +56,7 @@ def main(n, init_s_prior, quboPrior, getProposal, sampleAccept, temps):
                 's': [s]
             }
 
-            energy_fn =  functools.partial(mcmc.energy_fn.quboEnergy, H = H / temperature)
+            energy_fn =  functools.partial(mcmc.energyFns.quboEnergy, H = H / temperature)
             for sample_idx in range(100):
                 s_p = getProposal(s=s)
                 s = sampleAccept(s, s_p, energy_fn)
@@ -67,6 +67,6 @@ def main(n, init_s_prior, quboPrior, getProposal, sampleAccept, temps):
 if __name__ == '__main__':
     n = 6
     temps = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
-    uniformPrior = functools.partial(mcmc.binarypriors.uniform, n=n, device = 'cpu')
+    uniformPrior = functools.partial(mcmc.binaryPriors.uniform, n=n, device = 'cpu')
     main(n, uniformPrior, quboPrior, getProposal=uniformPrior, sampleAccept=acceptancesampler, temps=temps)
 
