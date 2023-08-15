@@ -19,7 +19,7 @@ def main():
         p_data[data_run] = {}
         for temperature in data[data_run]:
 
-            if temperature == 'H' or temperature == 'spectral_gap':
+            if temperature == 'H' or temperature == 'spectral_gap' or temperature == 'probleminstance':
                 continue
             print('data_run: {}, temperature: {}'.format(data_run, temperature))
             s = data[data_run][temperature]['s']
