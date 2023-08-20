@@ -5,6 +5,12 @@ from itertools import product
 import math as m
 
 def calc_transition_matrix(n, H, temperature, proposal_distribution='uniform'):
+    """
+    Creates a transition matrix where the rows represent the current state of the Markov chain and
+    the columns represent the possible states to transition to. All entires are the probabilities
+    of transitioning to a given state.
+    """
+
     if proposal_distribution == 'uniform':
         previous_states = torch.tensor(list(product([0, 1], repeat=n))).float()
         transition_states = torch.tensor(list(product([0, 1], repeat=n))).float()
@@ -21,5 +27,3 @@ def calc_transition_matrix(n, H, temperature, proposal_distribution='uniform'):
                 transition_matrix[i, j] = proposal_probability * acceptance_probability
 
         return transition_matrix
-
-transition_matrix = calc_transition_matrix(6, torch.rand((6, 6)), 0.1)
