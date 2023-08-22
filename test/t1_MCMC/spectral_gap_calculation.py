@@ -17,7 +17,6 @@ for temp in temperatures:
 import matplotlib.pyplot as plt
 # log-log plot
 
-print(spectral_gaps)
 plt.figure()
 plt.loglog(temperatures, spectral_gaps)
 plt.xlabel('Temperature')
