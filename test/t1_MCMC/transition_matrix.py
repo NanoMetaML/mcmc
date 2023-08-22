@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from itertools import product
 import math as m
+import scipy
 
 def calc_transition_matrix(n, H, temperature, proposal_distribution='uniform'):
     """
@@ -13,7 +14,6 @@ def calc_transition_matrix(n, H, temperature, proposal_distribution='uniform'):
     If H is batched (batch_size, n, n), returns transition matrix of shape (batch_size, 2 ** n, 2 ** n)
     If H is singular, either (1, n, n) or (n, n), returns transition matrix of shape (1, 2 ** n, 2 ** n)
     """
-
     if proposal_distribution == 'uniform':
 
         if (len(H.size()) == 2):
@@ -26,11 +26,18 @@ def calc_transition_matrix(n, H, temperature, proposal_distribution='uniform'):
 
         for i in range(2 ** n):
             for j in range(2 ** n):
+                if (i == j):
+                    continue
+
                 previous_state_energy = mcmc.energyFns.quboEnergy(previous_states[:, i, :], H)
                 transition_state_energy = mcmc.energyFns.quboEnergy(transition_states[:, j, :], H)
 
                 acceptance_probability = torch.min(torch.ones(H.size()[0]), m.e ** ((previous_state_energy - transition_state_energy) / temperature)).detach()
 
                 transition_matrix[:, i, j] = torch.mul(proposal_probability, acceptance_probability)
+
+        for i in range(2 ** n):
+            transition_matrix[:, i, i] = 1 - torch.sum(transition_matrix[:, i, :])
+
 
     return transition_matrix
