@@ -3,7 +3,7 @@ import functools
 
 
 def main():
-    uniformPrior = functools.partial(mcmc.binarypriors.uniform, n=10, device = 'cpu')
+    uniformPrior = functools.partial(mcmc.binaryPriors.uniform, n=10, device = 'cpu')
     for i in range(10):
         print(uniformPrior(i=i))
 

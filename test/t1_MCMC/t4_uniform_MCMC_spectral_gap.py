@@ -1,5 +1,6 @@
 import torch
 import numpy
+import scipy
 
 def main():
     data = torch.load('test/data/t3_uniform_MCMC_process.pt')
@@ -12,7 +13,7 @@ def main():
             print('data_run: {}, temperature: {}'.format(data_run, temperature))
             p = data[data_run][temperature]
             p = p.numpy()
-            w, v = numpy.linalg.eig(p)
+            w, v = scipy.linalg.schur(p)
             w = numpy.sort(w)
             spectral_gap[data_run][temperature] = 1 - max(w[w != 1])
 

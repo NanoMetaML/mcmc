@@ -153,3 +153,6 @@ def rydberg_energy(x, positions, detuning, c6=1, degree=6):
 def spectralGap(boltzmann_factor_fn, num_spins):
     partition, energies = partition_fn(energy_fn=boltzmann_factor_fn, num_spins=num_spins)
     return torch.sort(energies)[0][1] - torch.sort(energies)[0][0]
+    #torch.sort returns (values, indices). This is why [0] is used first to isolate values
+    #spectral gap is gap from ground state to first state, why torch.sort and index [1] is subtracted
+    #from [0]
