@@ -20,17 +20,17 @@ class MCMCLayer(torch.nn.Module):
     Methods
     forward(x, steps=10)
         Runs the MCMC chain for the specified number of steps
-    validate_forward(x, steps=10)
+    validate(x, steps=10, **kwargs)
         Runs the MCMC chain for the specified number of steps and returns a 
         batched tensor of all final states and proposed states
     """
 
-    def __init__(self, sampler, acceptance_rule, steps=10):
+    def __init__(self, sampler, acceptanceRule, steps=10):
         super(MCMCLayer, self).__init__()
         self.sampler = sampler
-        self.acceptance_rule = acceptance_rule
+        self.acceptanceRule = acceptanceRule
 
-    def forward(self, x, steps=10):
+    def forward(self, x, steps=10, **kwargs):
         """
         Runs the MCMC chain for the specified number of steps and returns
         the final state
@@ -38,11 +38,11 @@ class MCMCLayer(torch.nn.Module):
 
         for i in range(steps):
             x_hat = self.sampler(x)
-            x = self.acceptance_rule(x, x_hat)
+            x = self.acceptanceRule(x, x_hat)
 
         return x
 
-    def validate_forward(self, x, steps=10):
+    def validate(self, x, steps=10, **kwargs):
         """
         Runs the MCMC chain for the specified number of steps and returns 
         a batched list of tensors of all final states and proposed states
@@ -53,7 +53,7 @@ class MCMCLayer(torch.nn.Module):
         for i in range(steps):
             x_hat = self.sampler(x)
             x_hat_list.append(x_hat)
-            x = self.acceptance_rule(x, x_hat)
+            x = self.acceptanceRule(x, x_hat)
             x_list.append(x)
 
         return x_list, x_hat_list

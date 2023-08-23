@@ -1,15 +1,39 @@
 import torch
 import itertools
+from . import basis
 
 class Polynomial(torch.nn.Module):
-    def __init__(self, tensors, basis):
+    def __init__(self,
+                 n=10,
+                 degree=2,
+                 basis=basis.Basis.standard,
+                 tensors=None,
+                 device='cpu',
+                 dtype=torch.float32,
+                 requires_grad=False
+                 ):
+        super(Polynomial, self).__init__()
+        if tensors is None:
+            tensors = []
+            for i in range(degree+1):
+                tensors.append(
+                    torch.nn.Parameter(torch.rand(*([n]*degree), device=device, requires_grad=requires_grad)
+                , requires_grad=requires_grad)
+                )
+
         self.basis = basis
-        self.tensors = tensors
+        self.tensors = []
+
+        for tensor in tensors:
+            if not torch.is_tensor(tensor):
+                tensor = torch.tensor(tensor)
+            tensor = tensor.to(device)
+            tensor = tensor.to(dtype)
+            self.tensors.append(tensor)
+
 
     def forward(self, x):
-        for tensor in self.tensors:
-            x = poly(x, tensor)
-        return x
+        return poly(x, self.tensors)
 
     def __getitem__(self, idx):
         return self.tensors[idx]
@@ -18,7 +42,7 @@ class Polynomial(torch.nn.Module):
         return len(self.tensors)
 
 def poly(x, T):
-    s = T[0]
+    s = polyD(x, T[0])
     if len(T) > 1:
         for t in T[1:]:
             s = s + polyD(x, t)

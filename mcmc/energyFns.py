@@ -7,7 +7,10 @@ def boltzmannFactor(s, s_p, energy_fn, temperature=1):
     return torch.exp(-1 * (energy_fn(s_p) - energy_fn(s)) / temperature)
 
 def clampedBoltzmannFactor(s, s_p, energy_fn, temperature=1):
-    return torch.exp( -1 * torch.nn.functional.relu(energy_fn(s_p) - energy_fn(s)) / temperature)
+    e_diff = energy_fn(s_p) - energy_fn(s)
+    print("Energy diff")
+    print(e_diff)
+    return torch.exp( -1 * torch.nn.functional.relu(e_diff / temperature))
 
 def absBoltzmanFactor(s, s_p, energy_fn, temperature):
     return torch.exp(-1 * torch.abs(energy_fn(s_p) - energy_fn(s)) / temperature)

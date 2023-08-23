@@ -3,10 +3,10 @@ import itertools
 import functools
 import torch
 
-def pick_items_from_dict_lists(dict_of_lists):
+def getHyperParam(hyperParams):
     # Get the keys and lists from the dictionary
-    keys = list(dict_of_lists.keys())
-    lists = list(dict_of_lists.values())
+    keys = list(hyperParams.keys())
+    lists = list(hyperParams.values())
 
     # Generate the Cartesian product of all lists
     combinations = list(itertools.product(*lists))
@@ -66,7 +66,10 @@ def main(n, init_s_prior, quboPrior, getProposal, sampleAccept, temps):
 
 if __name__ == '__main__':
     n = 6
-    temps = [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+    hyperParams = {
+        temperature : [0.001, 0.01, 0.1, 1, 10, 100, 1000]
+    }
+    channel = mcmc.channels.BoltzmannPolyMCMC
     uniformPrior = functools.partial(mcmc.binarypriors.uniform, n=n, device = 'cpu')
     main(n, uniformPrior, quboPrior, getProposal=uniformPrior, sampleAccept=acceptancesampler, temps=temps)
 
