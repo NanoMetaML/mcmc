@@ -6,12 +6,12 @@ class MCMCLayer(torch.nn.Module):
     MCMC Layer
         
     Parameters
-    sampler: function
-        A function that takes in a tensor and returns a tensor
-    acceptance_rule: function
-        A function that takes in two tensors and returns a tensor
-    steps: int
-        Number of steps to run the MCMC chain
+        proposeNewSample: function
+            A function that takes in a tensor and proposes a new tensor for consideration by the acceptanceRule
+        acceptanceRule: function
+            A function that takes in two tensors and returns a tensor
+        steps: int
+            Number of steps to run the MCMC chain
 
     Returns
     x: tensor
@@ -25,10 +25,10 @@ class MCMCLayer(torch.nn.Module):
         batched tensor of all final states and proposed states
     """
 
-    def __init__(self, sampler, acceptanceRule, steps=10):
+    def __init__(self, proposeNewSample, applyAcceptRule, steps=10):
         super(MCMCLayer, self).__init__()
-        self.sampler = sampler
-        self.acceptanceRule = acceptanceRule
+        self.proposeNewSample = proposeNewSample
+        self.applyAcceptRule = applyAcceptRule
 
     def forward(self, x, steps=10, **kwargs):
         """
@@ -37,8 +37,8 @@ class MCMCLayer(torch.nn.Module):
         """
 
         for i in range(steps):
-            x_hat = self.sampler(x)
-            x = self.acceptanceRule(x, x_hat)
+            x_hat = self.proposeNewSample(x)
+            x = self.applyAcceptRule(x, x_hat)
 
         return x
 
@@ -51,9 +51,9 @@ class MCMCLayer(torch.nn.Module):
         x_hat_list = []
 
         for i in range(steps):
-            x_hat = self.sampler(x)
+            x_hat = self.proposeNewSample(x)
             x_hat_list.append(x_hat)
-            x = self.acceptanceRule(x, x_hat)
+            x = self.applyAcceptRule(x, x_hat)
             x_list.append(x)
 
         return x_list, x_hat_list

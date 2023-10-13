@@ -38,6 +38,9 @@ class Polynomial(torch.nn.Module):
     def __getitem__(self, idx):
         return self.tensors[idx]
 
+    def __setitem__(self, idx, value):
+        self.tensors[idx] = value
+
     def __len__(self):
         return len(self.tensors)
 
@@ -72,6 +75,10 @@ def polyD(x, T):
     for i in range(k):
         params.append(x)
         params.append([..., i])
+
+    #print(x.shape)
+    #print(T.shape)
+    #print(params)
 
     return torch.einsum(*params)
 

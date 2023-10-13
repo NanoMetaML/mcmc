@@ -2,6 +2,23 @@ import torch
 from .polynomial import Polynomial 
 from .basis import Basis
 
+def toStandard(x, basis):
+    if basis == Basis.standard:
+        return x
+    elif basis == Basis.spin:
+        return (x + 1) / 2
+    else:
+        raise NotImplementedError("Basis {} not implemented".format(basis))
+
+
+def toBasisFromStandard(x, basis):
+    if basis == Basis.standard:
+        return x
+    elif basis == Basis.spin:
+        return 2 * x - 1
+    else:
+        raise NotImplementedError("Basis {} not implemented".format(basis))
+
 def spinVToStandard(spin):
     return 2 * spin - 1
 

@@ -8,8 +8,6 @@ def boltzmannFactor(s, s_p, energy_fn, temperature=1):
 
 def clampedBoltzmannFactor(s, s_p, energy_fn, temperature=1):
     e_diff = energy_fn(s_p) - energy_fn(s)
-    print("Energy diff")
-    print(e_diff)
     return torch.exp( -1 * torch.nn.functional.relu(e_diff / temperature))
 
 def absBoltzmanFactor(s, s_p, energy_fn, temperature):

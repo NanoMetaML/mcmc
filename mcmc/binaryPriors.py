@@ -15,6 +15,6 @@ class Uniform:
         self.basis = basis
         self.bias = bias
 
-    def __call__(self, **kwargs):
+    def __call__(self, x=None, **kwargs):
         return uniform(self.n, self.device, self.basis, self.bias)
 
