@@ -1,39 +1,37 @@
 import torch
 import itertools
 from . import basis
+from . import generators
+
 
 class Polynomial(torch.nn.Module):
-    def __init__(self,
-                 n=10,
-                 degree=2,
-                 basis=basis.Basis.standard,
-                 tensors=None,
-                 device='cpu',
-                 dtype=torch.float32,
-                 requires_grad=False
-                 ):
+    def __init__(self, n=10, degree=2, generator=generators.dense):
+        """
+
+        Parameters:
+            n (int) : number of variables
+            degree (int) : degree of polynomial
+
+        """
         super(Polynomial, self).__init__()
-        if tensors is None:
-            tensors = []
-            for i in range(degree+1):
-                tensors.append(
-                    torch.nn.Parameter(torch.rand(*([n]*degree), device=device, requires_grad=requires_grad)
-                , requires_grad=requires_grad)
-                )
 
-        self.basis = basis
-        self.tensors = []
+        self.tensors = generator(n, degree)
 
-        for tensor in tensors:
-            if not torch.is_tensor(tensor):
-                tensor = torch.tensor(tensor)
-            tensor = tensor.to(device)
-            tensor = tensor.to(dtype)
-            self.tensors.append(tensor)
+        tensors = [torch.nn.Parameter(torch.rand([1]))]
 
+        for i in range(1, degree + 1):
+            tensors.append(torch.nn.Parameter(torch.rand(*([n] * i))))
+
+        self.tensors = tensors
+        self.n = n
+        self.degree = degree
 
     def forward(self, x):
         return poly(x, self.tensors)
+
+    def to(self, **kwargs):
+        for tensor in self.tensors:
+            tensor.to(kwargs)
 
     def __getitem__(self, idx):
         return self.tensors[idx]
@@ -42,7 +40,11 @@ class Polynomial(torch.nn.Module):
         self.tensors[idx] = value
 
     def __len__(self):
-        return len(self.tensors)
+        return self.n
+
+    def sparsity(self):
+        return sum([torch.nonzero(t) for t in self.tensors])
+
 
 def poly(x, T):
     s = polyD(x, T[0])
@@ -56,8 +58,8 @@ def polyD(x, T):
     """
     Computes the polynomial given by tensor T acting on input vector x
 
-    We use the Einstein summation convention to compute the polynomial. 
-    For example, if we given the 3-dimensional polynomial 
+    We use the Einstein summation convention to compute the polynomial.
+    For example, if we given the 3-dimensional polynomial
 
 
     Parameters:
@@ -76,11 +78,8 @@ def polyD(x, T):
         params.append(x)
         params.append([..., i])
 
-    #print(x.shape)
-    #print(T.shape)
-    #print(params)
-
     return torch.einsum(*params)
+
 
 def genCoeffTensorDense(n, deg, sample_fn):
     """
@@ -97,6 +96,7 @@ def genCoeffTensorDense(n, deg, sample_fn):
     for i in itertools.combinations(range(n), deg):
         coeffs[i] = sample_fn()
     return coeffs
+
 
 def genCoeffTensorSparse(n, deg, sample_fn):
     """
@@ -116,8 +116,9 @@ def genCoeffTensorSparse(n, deg, sample_fn):
 
     return genCoeffTensorDense(n, deg, sample_fn).flatten().to_sparse()
 
+
 def monoExpand(x, deg):
-    """ Compute all unique monomials of degree deg """
+    """Compute all unique monomials of degree deg"""
     raise NotImplementedError("monoExpand not implemented yet")
 
     params = []
@@ -129,10 +130,11 @@ def monoExpand(x, deg):
 
     return torch.einsum(*params)
 
+
 def polySparse(x, T):
-    """ Computes the batched polynomial on a sparse tensor """
-    raise NotImplementedError("sparse einsum not implemented yet")
-
-
-
-
+    """Computes the batched polynomial on a list of sparse terms"""
+    sum = T[0]
+    for terms in T[1:]:
+        for term in terms:
+            sum = sum + torch.prod(x[:, term[0]], dim=1) * term[1]
+    return sum
