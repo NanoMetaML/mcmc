@@ -1,44 +1,48 @@
-AUTHOR=Alexander Nano
-QUEUE=brk1080
-PROJECT=QuEra
+PACKAGE = nanomcmc
+PY = python
+VENV = .env
+TENV = .tenv
+BIN = $(VENV)/bin
+TIN = $(TENV)/bin
 
-MODULE=test_module
-REPO=modules
+all: doc 
 
-RUN_SCRIPT_PATH=./run.py
-EXPERIMENT_PATH=./tests/experiments/
-EXPERIMENT_NAME=load_data
-env:
-	python -m venv env
-	source env/bin/activate.fish
-	pip install -r requirements.txt
-	pip install -e .
+$(VENV): requirements.txt
+	$(PY) -m venv $(VENV)
+	$(BIN)/pip install --upgrade -r requirements.txt
+	touch $(VENV)
 
-test1:
-	python ./test/t1_MCMC/t1_priors.py
+$(TENV): testrequirements.txt setup.py
+	$(PY) -m venv $(TENV)
+	$(TIN)/pip install --upgrade -r testrequirements.txt
+	$(TIN)/pip install -e .
+	touch $(TENV)
 
-test2:
-	python ./test/t1_MCMC/t2_uniform_MCMC.py
+.PHONY: serve
+serve: doc
+	cd docs/build/html && $(PY) -m http.server 8018
 
-test3:
-	python ./test/t1_MCMC/t3_uniform_MCMC_process.py
+.PHONY: pypi
+pypi: 
+	python setup.py sdist
+	twine upload dist/*
 
-test4:
-	python ./test/t1_MCMC/t4_uniform_MCMC_spectral_gap.py
+.PHONY: doc
+doc: $(TENV)
+	@cd docs && make clean
+	@.tenv/bin/sphinx-apidoc -o ./docs/source/ ./$(PACKAGE)
+	@cd docs && make html
 
-test5:
-	python ./test/t1_MCMC/t5_uniform_MCMC_plot.py
+.PHONY: initdoc
+initdoc: 
+	@sphinx-quickstart docs
 
+.PHONY: test
+test: $(TENV)
+	$(TIN)/pytest -s ./test/test.py 
 
-module:
-	@echo "Building module" ./$(REPO)"/"$(MODULE_NAME) 
-	@mkdir -p ./$(REPO)/$(MODULE_NAME)
-	@touch ./$(REPO)/$(MODULE_NAME)/__init__.py
-	@echo "# Module $(MODULE)\n# Author: $(AUTHOR_NAME)\n# Date: \nfrom .module import load\n" >> ./$(REPO_NAME)/$(MODULE_NAME)/__init__.py
-	@echo "# Module $(MODULE)\n# Author: $(AUTHOR_NAME)\n# Date: \ndef load(**kwargs):\n	return NotImplementedError('Load not implemented for module $(MODULE_NAME)')\n" >> ./$(REPO_NAME)/$(MODULE_NAME)/module.py
+clean:
+	rm -rf $(VENV)
+	find . -type f -name *.pyc -delete
+	find . -type d -name __pycache__ -delete
 
-run_clearml: 
-	clearml-task --script $(RUN_SCRIPT_PATH) --project QuEra --name $(EXPERIMENT_NAME)  --branch $(BRANCH) --requirements requirements.txt --args exp_path=$(EXP_PATH) exp_name=$(EXP_NAME) --queue $(QUEUE_NAME)
-
-run_local:
-	python $(RUN_SCRIPT_PATH) exp_path=$(EXPERIMENT_PATH) exp_name=$(EXP)

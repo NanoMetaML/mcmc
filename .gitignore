@@ -1,4 +1,5 @@
 env/
+.tenv/
 test/data
 mcmc.egg*
 mcmc/__pycache__/
