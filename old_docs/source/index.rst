@@ -1,12 +1,12 @@
 .. nanomcmc documentation master file, created by
-   sphinx-quickstart on Sat Jan 20 11:25:10 2024.
+   sphinx-quickstart on Wed Jan 10 10:24:11 2024.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
+.. image:: ./_static/logo.svg
+  :align: center
+  :width: 100
+  :alt: nanomcmc logo
 
 ``nanomcmc``
 ==============
@@ -57,16 +57,15 @@ Step 2: Accept or reject the new state using an acceptance rule
       s1 -> s2 [label=<a(s<SUB>t+1</SUB> | s'<SUB>1</SUB>, s<SUB>t</SUB>)>];
    }
 
-
-Usage
------
-
 API
 ---
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
-   modules
+   api
+
+Usage
+-----
 
 Installation
 ~~~~~~~~~~~~
@@ -205,16 +204,6 @@ Future Tutorials
 
 1. Boltzmann Distributions
 2. Quantum Annealing
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
 
 
 

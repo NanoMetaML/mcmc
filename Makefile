@@ -29,13 +29,13 @@ pypi:
 
 .PHONY: doc
 doc: $(TENV)
-	@cd docs && make clean
-	@.tenv/bin/sphinx-apidoc -o ./docs/source/ ./$(PACKAGE)
-	@cd docs && make html
+	@cd docs && make clean && make html
 
 .PHONY: initdoc
 initdoc: 
-	@sphinx-quickstart docs
+	@$(TIN)/sphinx-quickstart ./docs/source/
+	@sphinx-apidoc -o ./docs/ ./$(PACKAGE)/ 
+
 
 .PHONY: test
 test: $(TENV)
