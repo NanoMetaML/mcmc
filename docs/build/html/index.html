@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>nanomcmc &#8212; nanomcmc 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="nanomcmc.MCMC" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="toctree-wrapper compound">
+</div>
+<section id="nanomcmc">
+<h1><code class="docutils literal notranslate"><span class="pre">nanomcmc</span></code><a class="headerlink" href="#nanomcmc" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">nanomcmc</span></code> is a python package for extremely parallelized MCMC simulations built on pytorch. MCMC is a very versatile algorithm. It can be used to realize Boltzmann distributions, random walks, scramblers, dynamics, and many other applications. We have an initial state of the system, <span class="math notranslate nohighlight">\(\mathbf{s}_0\)</span>. Then, MCMC is a two step process:</p>
+<div align="center" class="align-center"><div class="graphviz"><img src="_images/graphviz-277976a9ce89cce3e0fd79d6312deb94ead0616a.png" alt="digraph {
+   rankdir=LR;
+   node [shape=box];
+   s0[label=&lt;s&lt;SUB&gt;0&lt;/SUB&gt;&gt;];
+   s1[label=&lt;s&lt;SUB&gt;1&lt;/SUB&gt;&gt;];
+   s2[label=&lt;s&lt;SUB&gt;t&lt;/SUB&gt;&gt;];
+   s0 -&gt; s1;
+   s1 -&gt; s2 [style=dashed];
+}" class="graphviz" /></div>
+</div>
+<p>Step 1: Propose a new state by sampling</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{s}'_{t+1} \sim p(\mathbf{s}'_{t+1} \vert \mathbf{s}_{t})\]</div>
+<p>The proposer can randomly flip bits, uniformly choose a new sample, etc.</p>
+<p>Step 2: Accept or reject the new state using an acceptance rule</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{s}_{t+1} \sim a(\mathbf{s}_{t+1} \vert \mathbf{s}'_{t+1}, \mathbf{s}_{t})\]</div>
+<div align="center" class="align-center"><div class="graphviz"><img src="_images/graphviz-d2a57d744b070a54e9a197e4c54922ec849d2c6a.png" alt="digraph {
+   graph [ splines = false];
+   rankdir=LR;
+   node [shape=box];
+   s0[label=&lt;s&lt;SUB&gt;t&lt;/SUB&gt;&gt;];
+   s1[label=&lt;s'&lt;SUB&gt;1&lt;/SUB&gt;&gt;];
+   s2[label=&lt;s&lt;SUB&gt;t+1&lt;/SUB&gt;&gt;];
+   s0 -&gt; s1 [label=&quot;Propose&quot;];
+   s0 -&gt; s1 [label=&lt;r(s'&lt;SUB&gt;t+1&lt;/SUB&gt; | s&lt;SUB&gt;t&lt;/SUB&gt;)&gt;];
+   s1 -&gt; s2 [label=&quot;Accept/Reject&quot;];
+   s1 -&gt; s2 [label=&lt;a(s&lt;SUB&gt;t+1&lt;/SUB&gt; | s'&lt;SUB&gt;1&lt;/SUB&gt;, s&lt;SUB&gt;t&lt;/SUB&gt;)&gt;];
+}" class="graphviz" /></div>
+</div>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">nanomcmc.MCMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.energyFns">nanomcmc.energyFns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.channel">nanomcmc.channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.acceptRule">nanomcmc.acceptRule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.mcmcLayers">nanomcmc.mcmcLayers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.proposer">nanomcmc.proposer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.utils">nanomcmc.utils</a></li>
+</ul>
+</div>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h3>
+<p>To use <code class="docutils literal notranslate"><span class="pre">nanomcmc</span></code>, first install it using <code class="docutils literal notranslate"><span class="pre">pip</span></code> from the command line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="gp">$ </span><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+<span class="gp">$ </span><span class="o">(</span>.venv<span class="o">)</span><span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/nanometaml/mcmc.git
+</pre></div>
+</div>
+<p>Or, clone the package and install it using <code class="docutils literal notranslate"><span class="pre">pip</span></code> from the command line:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>clone<span class="w"> </span>git+https://github.com/nanometaml/mcmc.git
+<span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>./mcmc
+</pre></div>
+</div>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h2>
+<p>All of the following examples assume that you have imported <code class="docutils literal notranslate"><span class="pre">nanomcmc</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">nanomcmc</span> <span class="k">as</span> <span class="nn">mcmc</span>
+</pre></div>
+</div>
+<section id="scrambler">
+<h3>Scrambler<a class="headerlink" href="#scrambler" title="Link to this heading">¶</a></h3>
+<p>Let’s start with a simple example. We have a system with 3 binary variables. We want to jump around randomly to scramble the bits.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initial state</span>
+<span class="n">s_0</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="uniform-scrambler">
+<h4>Uniform Scrambler<a class="headerlink" href="#uniform-scrambler" title="Link to this heading">¶</a></h4>
+<p>We can define a scrambler as follows. We want to randomly flip each bit with a probability of 0.5.</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{s}'_{t+1} \sim p(\mathbf{s}'_{t+1} \vert \mathbf{s}_{t}) = 2^-n\]</div>
+<p>Which is equivalent to choosing each bit with a fair coin,</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{s}'_{t+1, i} \sim \text{Bernoulli}(0.5)\]</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Random uniform proposer</span>
+<span class="n">proposer</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="acceptance-rule">
+<h4>Acceptance Rule<a class="headerlink" href="#acceptance-rule" title="Link to this heading">¶</a></h4>
+<p>To keep things simple, we’ll always accept the new state.</p>
+<p>Our acceptance rule is to always accept the new state,</p>
+<div class="math notranslate nohighlight">
+\[a(\mathbf{s}_{t+1} \vert \mathbf{s}'_{t+1}, \mathbf{s}_{t}) = \delta(\mathbf{s}_{t+1} - \mathbf{s}'_{t+1})\]</div>
+<div class="math notranslate nohighlight">
+\[\mathbf{s}_{t+1} = \mathbf{s}'_{t+1}\]</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Automatically accept all proposals</span>
+<span class="n">acceptanceRule</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">s_p</span><span class="p">:</span> <span class="n">s_p</span>
+</pre></div>
+</div>
+</section>
+<section id="mcmc">
+<h4>MCMC<a class="headerlink" href="#mcmc" title="Link to this heading">¶</a></h4>
+<p>We put it all together using the <code class="docutils literal notranslate"><span class="pre">MCMC</span></code> class:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">scrambler</span> <span class="o">=</span> <span class="n">mcmc</span><span class="o">.</span><span class="n">MCMC</span><span class="p">(</span>
+    <span class="n">proposer</span><span class="o">=</span><span class="n">proposer</span><span class="p">,</span> <span class="n">acceptanceRule</span><span class="o">=</span><span class="n">acceptanceRule</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="n">scrambler</span><span class="p">(</span><span class="n">s_0</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">tensor</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]])</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="random-walk">
+<h3>Random Walk<a class="headerlink" href="#random-walk" title="Link to this heading">¶</a></h3>
+<p>Let’s try a more interesting example. We have our same system with 3 binary variables and we want to perform a random walk.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Automatically accept all proposals</span>
+<span class="n">acceptanceRule</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">s_p</span><span class="p">:</span> <span class="n">s_p</span>
+
+<span class="k">def</span> <span class="nf">proposer</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="c1"># Chooses a random bit flip</span>
+    <span class="n">s_f</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">OneHotCategorical</span><span class="p">(</span><span class="n">probs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">/</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+    <span class="c1"># Flips the bit</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">remainder</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">s_f</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># 1 step in the chain</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Initial state</span>
+<span class="n">s_0</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">scrambler</span> <span class="o">=</span> <span class="n">mcmc</span><span class="o">.</span><span class="n">MCMC</span><span class="p">(</span>
+    <span class="n">proposer</span><span class="o">=</span><span class="n">proposer</span><span class="p">,</span> <span class="n">acceptanceRule</span><span class="o">=</span><span class="n">acceptanceRule</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="n">steps</span>
+<span class="p">)</span>
+
+<span class="n">scrambler</span><span class="p">(</span><span class="n">s_0</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">tensor</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>Notices how the output is only one step away from the input. Increase the number of steps to get a longer random walk and increase the Hamming distance.</p>
+</section>
+</section>
+<section id="future-tutorials">
+<h2>Future Tutorials<a class="headerlink" href="#future-tutorials" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Boltzmann Distributions</p></li>
+<li><p>Quantum Annealing</p></li>
+</ol>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+<section id="id1">
+<h1>Indices and tables<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/logo.svg" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="#">nanomcmc</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">nanomcmc.MCMC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.energyFns">nanomcmc.energyFns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.channel">nanomcmc.channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.acceptRule">nanomcmc.acceptRule</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.mcmcLayers">nanomcmc.mcmcLayers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.proposer">nanomcmc.proposer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html#module-nanomcmc.utils">nanomcmc.utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="modules.html" title="next chapter">nanomcmc.MCMC</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Blake Wilson.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

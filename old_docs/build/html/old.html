@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>nanomcmc package &#8212; nanomcmc 0.0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+    <script src="_static/documentation_options.js?v=d45e8c67"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="nanomcmc-package">
+<h1>nanomcmc package<a class="headerlink" href="#nanomcmc-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-nanomcmc.acceptRule">
+<span id="nanomcmc-acceptrule-module"></span><h2>nanomcmc.acceptRule module<a class="headerlink" href="#module-nanomcmc.acceptRule" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.acceptRule.batchedProbAccept">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.acceptRule.</span></span><span class="sig-name descname"><span class="pre">batchedProbAccept</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">probFn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.acceptRule.batchedProbAccept" title="Link to this definition">¶</a></dt>
+<dd><p>Batched probabilistic acceptance rule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>torch.Tensor</em>) – Batched state tensor of shape (batch_size, num_dim)</p></li>
+<li><p><strong>s_p</strong> (<em>torch.Tensor</em>) – Batched state tensor of shape (batch_size, num_dim)</p></li>
+<li><p><strong>probFn</strong> (<em>Callable</em>) – function that takes in a tensor of configurations and returns the corresponding probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-nanomcmc.channel">
+<span id="nanomcmc-channel-module"></span><h2>nanomcmc.channel module<a class="headerlink" href="#module-nanomcmc.channel" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.channel.additiveNoise">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.channel.</span></span><span class="sig-name descname"><span class="pre">additiveNoise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.channel.additiveNoise" title="Link to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Updates s to s_p by adding constant ‘noise’ equal to s - s_p.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>torch.Tensor</em>) – Batched state tensor</p></li>
+<li><p><strong>s_p</strong> (<em>torch.Tensor</em>) – Batched state tensor</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-nanomcmc.energyFns">
+<span id="nanomcmc-energyfns-module"></span><h2>nanomcmc.energyFns module<a class="headerlink" href="#module-nanomcmc.energyFns" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.energyFns.absBoltzmanFactor">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.energyFns.</span></span><span class="sig-name descname"><span class="pre">absBoltzmanFactor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#nanomcmc.energyFns.absBoltzmanFactor" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the boltzmann factor for the specified system using the absolute value of the different in energy.
+:param s: Batched state tensor of shape (batch_size, num_dim)
+:type s: torch.Tensor
+:param s_p: Batched state tensor of shape (batch_size, num_dim)
+:type s_p: torch.Tensor
+:param energy_fn: function that takes in a tensor of configurations and returns the corresponding energy.
+:type energy_fn: function</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.energyFns.boltzmannFactor">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.energyFns.</span></span><span class="sig-name descname"><span class="pre">boltzmannFactor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#nanomcmc.energyFns.boltzmannFactor" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the Boltzmann factor for the specified system.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.energyFns.boltzmann_factor">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.energyFns.</span></span><span class="sig-name descname"><span class="pre">boltzmann_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.energyFns.boltzmann_factor" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the boltzmann factor for the specified system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>torch.Tensor</em>) – Batched configuration tensor of shape (batch_size, num_dim)</p></li>
+<li><p><strong>H</strong> (<em>torch.Tensor</em>) – Batched energy matrices of shape (batch_size, num_dim, num_dim)</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Scalar representing the temperature of the system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The boltzmann factor for each configuration in the batch.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.energyFns.boltzmann_partition_fn">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.energyFns.</span></span><span class="sig-name descname"><span class="pre">boltzmann_partition_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_spins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interactions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.energyFns.boltzmann_partition_fn" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the exact Boltzmann partition function for the specified system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_spins</strong> (<em>int</em>) – int representing the number of spins in the system.</p></li>
+<li><p><strong>interactions</strong> (<em>torch.Tensor</em>) – Tensor of shape (num_spins, num_spins) representing the interaction graph between spins.</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Scalar representing the temperature of the system.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Partition function.
+torch.Tensor : Energy vector of size (2**num_spins) that holds the energy of all configurations of the system.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.energyFns.clampedBoltzmannFactor">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.energyFns.</span></span><span class="sig-name descname"><span class="pre">clampedBoltzmannFactor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s_p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#nanomcmc.energyFns.clampedBoltzmannFactor" title="Link to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Computes the Boltzmann factor.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>torch.Tensor</em>) – Batched state tensor of shape (batch_size, num_dim)</p></li>
+<li><p><strong>s_p</strong> (<em>torch.Tensor</em>) – Batched state tensor of shape (batch_size, num_dim)</p></li>
+<li><p><strong>energy_fn</strong> (<em>function</em>) – function that takes in a tensor of configurations and returns the corresponding energy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.energyFns.partition_fn">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.energyFns.</span></span><span class="sig-name descname"><span class="pre">partition_fn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">energy_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_spins</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.energyFns.partition_fn" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the partition function for the specified system given an energy function.</p>
+<p>Complexity: O(d^n) where d is the number of basis states and n is the number of spins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>energy_fn</strong> (<em>function</em>) – function that takes in a tensor of configurations and returns the corresponding energy.</p></li>
+<li><p><strong>num_spins</strong> (<em>int</em>) – int representing the number of spins in the system.</p></li>
+<li><p><strong>basis</strong> (<em>list</em>) – list of possible states for each spin</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Partition function.
+torch.Tensor : Energy vector of size (2**num_spins) that holds the energy of all configurations of the system.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.energyFns.rydberg_energy">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.energyFns.</span></span><span class="sig-name descname"><span class="pre">rydberg_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">positions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detuning</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c6</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">degree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.energyFns.rydberg_energy" title="Link to this definition">¶</a></dt>
+<dd><p>Computes the energy of a Rydberg system given the Rydberg excitations, x, and their positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>positions</strong> (<em>torch.Tensor</em>) – Tensor of shape (batch_size, num_atoms, 3) representing the positions of the atoms.</p></li>
+<li><p><strong>x</strong> (<em>torch.Tensor</em>) – Tensor of shape (batch_size, num_atoms) representing if a site is in the Rydberg state.</p></li>
+<li><p><strong>c6</strong> (<em>float</em>) – Scalar representing the coefficient of the sixth power term in the interaction strength.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Energies of all configurations in x.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.energyFns.spectralGap">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.energyFns.</span></span><span class="sig-name descname"><span class="pre">spectralGap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boltzmann_factor_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_spins</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.energyFns.spectralGap" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-nanomcmc.mcmc">
+<span id="nanomcmc-mcmc-module"></span><h2>nanomcmc.mcmc module<a class="headerlink" href="#module-nanomcmc.mcmc" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nanomcmc.mcmc.MCMCLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nanomcmc.mcmc.</span></span><span class="sig-name descname"><span class="pre">MCMCLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proposer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acceptanceRule</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.mcmc.MCMCLayer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>NN layer that runs a MCMC chain for a specified number of steps</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Callable</strong> – proposer
+Input: torch.tensor
+Output: torch.tensor</p></li>
+<li><p><strong>Callable</strong> – acceptanceRule
+A function whose input is two tensors and output a single tensor</p></li>
+<li><p><strong>int</strong> – steps
+Number of MCMC steps</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><dl class="simple">
+<dt>x: tensor</dt><dd><p>The final state of the MCMC chain</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="nanomcmc.mcmc.MCMCLayer.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#nanomcmc.mcmc.MCMCLayer.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the MCMC chain for the specified number of steps and returns
+the final state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>torch.Tensor</em>) – Initial state of the chain</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – Number of steps to run</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Final state of the MCMC chain</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="nanomcmc.mcmc.MCMCLayer.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#nanomcmc.mcmc.MCMCLayer.validate" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the MCMC chain for the specified number of steps and returns
+a batched list of tensors of all states and proposed states.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>torch.Tensor</em>) – Initial state of the chain</p></li>
+<li><p><strong>steps</strong> (<em>int</em>) – Number of steps to run</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Final state of the MCMC chain</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, torch.Tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-nanomcmc.mcmcLayers">
+<span id="nanomcmc-mcmclayers-module"></span><h2>nanomcmc.mcmcLayers module<a class="headerlink" href="#module-nanomcmc.mcmcLayers" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nanomcmc.mcmcLayers.Boltzmann">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nanomcmc.mcmcLayers.</span></span><span class="sig-name descname"><span class="pre">Boltzmann</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">proposer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">energy_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.mcmcLayers.Boltzmann" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nanomcmc.mcmc.MCMCLayer" title="nanomcmc.mcmc.MCMCLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCMCLayer</span></code></a></p>
+<p>A Boltzmann MCMCLayer using the Metropolis-Hastings acceptance rule with an energy function to realize a Boltzmann distribution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Callable</strong> – proposer - A function that takes a sample and returns a new sample.</p></li>
+<li><p><strong>Callable</strong> – energy_fn -  A function that takes a sample and returns a scalar energy.</p></li>
+<li><p><strong>float</strong> – temperature - The temperature of the Boltzmann distribution.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="nanomcmc.mcmcLayers.Identity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nanomcmc.mcmcLayers.</span></span><span class="sig-name descname"><span class="pre">Identity</span></span><a class="headerlink" href="#nanomcmc.mcmcLayers.Identity" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nanomcmc.mcmc.MCMCLayer" title="nanomcmc.mcmc.MCMCLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCMCLayer</span></code></a></p>
+<p>Mock MCMCLayer that returns the input.</p>
+</dd></dl>
+
+</section>
+<section id="module-nanomcmc.proposer">
+<span id="nanomcmc-proposer-module"></span><h2>nanomcmc.proposer module<a class="headerlink" href="#module-nanomcmc.proposer" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="nanomcmc.proposer.TransitionMatrix">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nanomcmc.proposer.</span></span><span class="sig-name descname"><span class="pre">TransitionMatrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tMatrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toMatElem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fromMatElem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.proposer.TransitionMatrix" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Uses transition matrix to sample next state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tMatrix</strong> (<em>torch.Tensor</em>) – A tensor representing the transition matrix.</p></li>
+<li><p><strong>toMatElem</strong> (<em>Callable</em>) – A function that converts a bitstring to an element of the transition matrix.</p></li>
+<li><p><strong>fromMatElem</strong> (<em>Callable</em>) – A function that converts an element of the transition matrix to a bitstring.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-nanomcmc.utils">
+<span id="nanomcmc-utils-module"></span><h2>nanomcmc.utils module<a class="headerlink" href="#module-nanomcmc.utils" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.utils.stringToUint">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.utils.</span></span><span class="sig-name descname"><span class="pre">stringToUint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bitstring_tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.utils.stringToUint" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a bitstring tensor to an unsigned integer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bitstring_tensor</strong> – torch.Tensor
+A tensor of bits</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>int</dt><dd><p>The unsigned integer corresponding to the bitstring</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>uint_value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="nanomcmc.utils.uintToString">
+<span class="sig-prename descclassname"><span class="pre">nanomcmc.utils.</span></span><span class="sig-name descname"><span class="pre">uintToString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uint_tensor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_bits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nanomcmc.utils.uintToString" title="Link to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Convert a batch of unsigned integers to bitstring tensors for any given basis.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uint_tensor</strong> – torch.Tensor
+A 1D tensor of unsigned integers to be converted.</p></li>
+<li><p><strong>num_bits</strong> – int
+The number of bits/digits in each output tensor.</p></li>
+<li><p><strong>basis</strong> – int
+The base for the conversion.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>torch.Tensor</dt><dd><p>A 2D tensor where each row is the bitstring representation of each integer in the batch.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bitstring_tensors</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-nanomcmc">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nanomcmc" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/logo.svg" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="index.html">nanomcmc</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">nanomcmc</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, Blake Wilson.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/old.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
