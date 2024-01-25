@@ -25,6 +25,11 @@ Why ``nanomcmc``?
 
   Computation time and speed-up for computing 100 steps of MCMC on a 100 bit system with a Metropolis-Hastings acceptance rule and a sparse 3-degree, 300 monomial polynomial energy function (polytensor).  Left y-axis) Time to compute MCMC on a CPU and GPU. Right y-axis) Speedup of GPU over CPU. x-axis) the number of parallel chains, or batch size, from 1 chain to 1 million chains. The black line is the time for a CPU (Intel Xeon W-2245 @ 3.9Ghz) and the green line is the time for an A5000 GPU. The purple dashed line shows the speed-up of the GPU over the CPU for each parallel chain size.
 
+
+Documentation
+-------------
+The documentation is hosted on `Github Pages <https://nanometaml.github.io/mcmc/docs/build/html/>`_.
+
 Quick Start
 -----------
 
