@@ -19,7 +19,7 @@ Why ``nanomcmc``?
 
   My research group is working on several energy model projects, so I needed a way to quickly prototype MCMC algorithms. I also wanted to be able to run them on a GPU and take advantage of PyTorch on the backend. I couldn't find any existing packages that were simple and demonstrated significant speed-up; so I wrote my own. I hope you find it useful too!
 
-.. figure:: _static/cuda_vs_cpu_sparse.svg
+.. figure:: ./test/cuda_vs_cpu_sparse.svg
   :align: center
   :width: 80%
 
