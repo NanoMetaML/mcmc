@@ -37,7 +37,18 @@
 </div>
 <section id="nanomcmc">
 <h1><code class="docutils literal notranslate"><span class="pre">nanomcmc</span></code><a class="headerlink" href="#nanomcmc" title="Link to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">nanomcmc</span></code> is a python package for extremely parallelized MCMC simulations built on pytorch. MCMC is a very versatile algorithm. It can be used to realize Boltzmann distributions, random walks, scramblers, dynamics, and many other applications. We have an initial state of the system, <span class="math notranslate nohighlight">\(\mathbf{s}_0\)</span>. Then, MCMC is a two step process:</p>
+<p><code class="docutils literal notranslate"><span class="pre">nanomcmc</span></code> is a python package for extremely parallelized, autograd-friendly MCMC with Pytorch. MCMC is a very versatile algorithm. It can be used to realize Boltzmann distributions, random walks, scramblers, dynamics, and many other applications.</p>
+<p>Why <code class="docutils literal notranslate"><span class="pre">nanomcmc</span></code>?</p>
+<blockquote>
+<div><p>My research group is working on several energy model projects, so I needed a way to quickly prototype MCMC algorithms. I also wanted to be able to run them on a GPU and take advantage of PyTorch on the backend. I couldn’t find any existing packages that were simple and demonstrated significant speed-up; so I wrote my own. I hope you find it useful too!</p>
+</div></blockquote>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="_images/cuda_vs_cpu_sparse.svg"><img alt="_images/cuda_vs_cpu_sparse.svg" src="_images/cuda_vs_cpu_sparse.svg" width="80%" /></a>
+<figcaption>
+<p><span class="caption-text">Computation time and speed-up for computing 100 steps of MCMC on a 100 bit system with a Metropolis-Hastings acceptance rule and a sparse 3-degree polynomial energy function (polytensor).  Left y-axis) Time to compute MCMC on a CPU and GPU. Right y-axis) Speedup of GPU over CPU. x-axis) the number of parallel chains, or batch size, from 1 chain to 1 million chains. The black line is the time for a CPU (Intel Xeon W-2245 &#64; 3.9Ghz) and the green line is the time for an A5000 GPU. The purple dashed line shows the speed-up of the GPU over the CPU for each parallel chain size.</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Each chain begins in an initial state, <span class="math notranslate nohighlight">\(\mathbf{s}_0\)</span>. Then, each link in the MCMC chain is a two step process:</p>
 <div align="center" class="align-center"><div class="graphviz"><img src="_images/graphviz-277976a9ce89cce3e0fd79d6312deb94ead0616a.png" alt="digraph {
    rankdir=LR;
    node [shape=box];
@@ -68,6 +79,7 @@
    s1 -&gt; s2 [label=&lt;a(s&lt;SUB&gt;t+1&lt;/SUB&gt; | s'&lt;SUB&gt;1&lt;/SUB&gt;, s&lt;SUB&gt;t&lt;/SUB&gt;)&gt;];
 }" class="graphviz" /></div>
 </div>
+<p>The algorithm is very simple, but very powerful.</p>
 <section id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
 </section>
@@ -183,25 +195,142 @@
 </div>
 <p>Notices how the output is only one step away from the input. Increase the number of steps to get a longer random walk and increase the Hamming distance.</p>
 </section>
+<section id="boltzmann-sampling">
+<h3>Boltzmann Sampling<a class="headerlink" href="#boltzmann-sampling" title="Link to this heading">¶</a></h3>
+<p>We’ll start by building a simple Boltzmann sampler. The Boltzmann distribution is given by:</p>
+<div class="math notranslate nohighlight">
+\[z \sim \mu(z) = e^{-E(z) / \tau} / Z\]</div>
+<p>where <span class="math notranslate nohighlight">\(z \in \{0, 1\}^n\)</span> is a bit string, <span class="math notranslate nohighlight">\(E(z)\)</span> is the energy of <span class="math notranslate nohighlight">\(z\)</span>, and <span class="math notranslate nohighlight">\(\tau\)</span> is a temperature <span class="math notranslate nohighlight">\(\tau \in \mathbb{R}_{\geq 0}\)</span>. We start by defining our energy function as a polynomial using <a class="reference external" href="https:/btrainwilson.github.io/polytensor">polytensor</a>,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">polytensor</span>
+
+ <span class="n">orig_coefficients</span> <span class="o">=</span> <span class="n">polytensor</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">coeffPUBORandomSampler</span><span class="p">(</span>
+     <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">num_terms</span><span class="o">=</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">],</span> <span class="n">sample_fn</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+ <span class="p">)</span>
+
+ <span class="n">poly</span> <span class="o">=</span> <span class="n">polytensor</span><span class="o">.</span><span class="n">SparsePolynomial</span><span class="p">(</span><span class="n">coefficients</span><span class="o">=</span><span class="n">orig_coefficients</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, poly evaluates <span class="math notranslate nohighlight">\(E(z)\)</span>. Then, we define our Boltzmann distribution using the <code class="docutils literal notranslate"><span class="pre">Boltzmann</span></code> class,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tau</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="n">uniformBoltzmann</span> <span class="o">=</span> <span class="n">mcmc</span><span class="o">.</span><span class="n">Boltzmann</span><span class="p">(</span>
+    <span class="n">proposer</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">),</span>
+    <span class="n">energy_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">tau</span><span class="p">,</span>
+    <span class="n">steps</span><span class="o">=</span><span class="n">s</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">Boltzmann</span></code> class takes a proposer, an energy function, and the number of steps to take in the chain. The proposer is the same as before, a uniform Bernoulli proposer. The energy function is the polynomial we defined above divided by the temperature. The temperature is a hyperparameter that controls the variance of the Boltzmann distribution. The higher the temperature, the more uniform the distribution. The lower the temperature, the more peaked the distribution. The temperature is a hyperparameter that can be tuned to your application.</p>
+<p>Now, we can sample from the Boltzmann distribution,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uniformBoltzmann</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To recreate the plot at the top of the page, run the following code,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">nanomcmc</span> <span class="k">as</span> <span class="nn">mcmc</span>
+<span class="kn">import</span> <span class="nn">polytensor</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<span class="k">def</span> <span class="nf">batchedTest</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+
+    <span class="n">num_terms</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span>
+
+    <span class="n">orig_coefficients</span> <span class="o">=</span> <span class="n">polytensor</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">coeffPUBORandomSampler</span><span class="p">(</span>
+        <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">num_terms</span><span class="o">=</span><span class="n">num_terms</span><span class="p">,</span> <span class="n">sample_fn</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">poly</span> <span class="o">=</span> <span class="n">polytensor</span><span class="o">.</span><span class="n">SparsePolynomial</span><span class="p">(</span><span class="n">coefficients</span><span class="o">=</span><span class="n">orig_coefficients</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="n">uniformBoltzmann</span> <span class="o">=</span> <span class="n">mcmc</span><span class="o">.</span><span class="n">Boltzmann</span><span class="p">(</span>
+        <span class="n">proposer</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">bernoulli</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">),</span>
+        <span class="n">energy_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+        <span class="n">steps</span><span class="o">=</span><span class="n">s</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">uniformBoltzmann</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+
+<span class="k">def</span> <span class="nf">benchmarkPackage</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main function for test.py</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Benchmarking nanomcmc package&quot;</span><span class="p">)</span>
+    <span class="n">cuda_time</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">cpu_time</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">b_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">b_i</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>       <span class="c1"># number of variables in polynomial</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">100</span>       <span class="c1"># number of steps</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="mi">3</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Testing CUDA&quot;</span><span class="p">)</span>
+        <span class="n">cuda_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batchedTest</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cuda&quot;</span><span class="p">))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Testing CPU&quot;</span><span class="p">)</span>
+        <span class="n">cpu_time</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batchedTest</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="s2">&quot;cpu&quot;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">cuda_time</span><span class="p">,</span> <span class="n">cpu_time</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="n">cuda_time</span><span class="p">,</span> <span class="n">cpu_time</span> <span class="o">=</span> <span class="n">benchmarkPackage</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">cuda_time</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cpu_time</span><span class="p">)</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plotting results&quot;</span><span class="p">)</span>
+
+    <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span> <span class="o">**</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cpu_time</span><span class="p">))]</span>
+
+    <span class="c1"># Create a figure and a single subplot</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+    <span class="c1"># First plot: Log-log plot for cuda_time and cpu_time on the left y-axis</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">cuda_time</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cuda - A5000&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">cpu_time</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;cpu - Intel Xeon W-2245&quot;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Batch Size (# Vectors)&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Computation Time (s)&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Sparse Polynomial MCMC Performance and GPU Speed-up&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper left&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Create a second y-axis for the speed-up plot</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">cpu_time</span> <span class="o">/</span> <span class="n">cuda_time</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;GPU Speed-up&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Speed-up&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">labelcolor</span><span class="o">=</span><span class="s2">&quot;purple&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Adjust layout and save the figure</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;./cuda_vs_cpu_with_speedup.svg&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 <section id="future-tutorials">
 <h2>Future Tutorials<a class="headerlink" href="#future-tutorials" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
-<li><p>Boltzmann Distributions</p></li>
 <li><p>Quantum Annealing</p></li>
 </ol>
 </section>
 </section>
 <section id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
-</section>
-<section id="id1">
-<h1>Indices and tables<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
