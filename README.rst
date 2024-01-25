@@ -75,12 +75,12 @@ We can define a scrambler as follows. We want to randomly flip each bit with a p
 
 
 
-$$\mathbf{s}'_{t+1} \sim p(\mathbf{s}'_{t+1} \vert \mathbf{s}_{t}) = 2^-n $$
+$$\\mathbf{s}'_{t+1} \\sim p(\\mathbf{s}'_{t+1} \\vert \\mathbf{s}_{t}) = 2^-n $$
 
 Which is equivalent to choosing each bit with a fair coin,
 
 
-$$\mathbf{s}'_{t+1, i} \sim \text{Bernoulli}(0.5)$$
+$$\\mathbf{s}'_{t+1, i} \\sim \\text{Bernoulli}(0.5)$$
 
 
 .. code-block:: python
@@ -95,9 +95,9 @@ To keep things simple, we'll always accept the new state.
 Our acceptance rule is to always accept the new state,
 
 
-$$a(\mathbf{s}_{t+1} \vert \mathbf{s}'_{t+1}, \mathbf{s}_{t}) = \delta(\mathbf{s}_{t+1} - \mathbf{s}'_{t+1})$$
+$$a(\\mathbf{s}_{t+1} \\vert \\mathbf{s}'_{t+1}, \\mathbf{s}_{t}) = \\delta(\\mathbf{s}_{t+1} - \\mathbf{s}'_{t+1})$$
 
-$$\mathbf{s}_{t+1} = \mathbf{s}'_{t+1}$$
+$$\\mathbf{s}_{t+1} = \\mathbf{s}'_{t+1}$$
 
 .. code-block:: python
 
@@ -161,9 +161,9 @@ Boltzmann Sampling
 We'll start by building a simple Boltzmann sampler. The Boltzmann distribution is given by:
 
 
-$$z \sim \mu(z) = e^{-E(z) / \tau} / Z$$
+$$z \\sim \\mu(z) = e^{-E(z) / \\tau} / Z$$
 
-where $z \in \{0, 1\}^n$ is a bit string, $E(z)$ is the energy of $z$, and $\tau$ is a temperature $\tau \in \mathbb{R}_{\geq 0}$. We start by defining our energy function as a polynomial using `polytensor <https:/btrainwilson.github.io/polytensor>`_,
+where $z \\in \\{0, 1\\}^n$ is a bit string, $E(z)$ is the energy of $z$, and $\\tau$ is a temperature $\\tau \\in \\mathbb{R}_{\\geq 0}$. We start by defining our energy function as a polynomial using `polytensor <https:/btrainwilson.github.io/polytensor>`_,
 
 .. code-block:: python
 
