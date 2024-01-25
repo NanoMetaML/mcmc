@@ -25,55 +25,6 @@ Why ``nanomcmc``?
 
   Computation time and speed-up for computing 100 steps of MCMC on a 100 bit system with a Metropolis-Hastings acceptance rule and a sparse 3-degree, 300 monomial polynomial energy function (polytensor).  Left y-axis) Time to compute MCMC on a CPU and GPU. Right y-axis) Speedup of GPU over CPU. x-axis) the number of parallel chains, or batch size, from 1 chain to 1 million chains. The black line is the time for a CPU (Intel Xeon W-2245 @ 3.9Ghz) and the green line is the time for an A5000 GPU. The purple dashed line shows the speed-up of the GPU over the CPU for each parallel chain size.
 
-
-Each chain begins in an initial state, $\mathbf{s}_0$. Then, each link in the MCMC chain is a two step process:
-
-.. graphviz::
-   :align: center
-
-   digraph {
-      rankdir=LR;
-      node [shape=box];
-      s0[label=<s<SUB>0</SUB>>];
-      s1[label=<s<SUB>1</SUB>>];
-      s2[label=<s<SUB>t</SUB>>];
-      s0 -> s1;
-      s1 -> s2 [style=dashed];
-   }
-
-Step 1: Propose a new state by sampling 
-
-.. math::
-
-    \mathbf{s}'_{t+1} \sim p(\mathbf{s}'_{t+1} \vert \mathbf{s}_{t})
-
-
-The proposer can randomly flip bits, uniformly choose a new sample, etc.
-
-Step 2: Accept or reject the new state using an acceptance rule
-
-.. math::
-
-    \mathbf{s}_{t+1} \sim a(\mathbf{s}_{t+1} \vert \mathbf{s}'_{t+1}, \mathbf{s}_{t})
-
-.. graphviz::
-   :align: center
-
-   digraph {
-      graph [ splines = false];
-      rankdir=LR;
-      node [shape=box];
-      s0[label=<s<SUB>t</SUB>>];
-      s1[label=<s'<SUB>1</SUB>>];
-      s2[label=<s<SUB>t+1</SUB>>];
-      s0 -> s1 [label="Propose"];
-      s0 -> s1 [label=<r(s'<SUB>t+1</SUB> | s<SUB>t</SUB>)>];
-      s1 -> s2 [label="Accept/Reject"];
-      s1 -> s2 [label=<a(s<SUB>t+1</SUB> | s'<SUB>1</SUB>, s<SUB>t</SUB>)>];
-   }
-
-The algorithm is very simple, but very powerful.
-
 Quick Start
 -----------
 
@@ -123,15 +74,13 @@ Uniform Scrambler
 We can define a scrambler as follows. We want to randomly flip each bit with a probability of 0.5.
 
 
-.. math::
 
-    \mathbf{s}'_{t+1} \sim p(\mathbf{s}'_{t+1} \vert \mathbf{s}_{t}) = 2^-n 
+$$\mathbf{s}'_{t+1} \sim p(\mathbf{s}'_{t+1} \vert \mathbf{s}_{t}) = 2^-n $$
 
 Which is equivalent to choosing each bit with a fair coin,
 
-.. math::
 
-    \mathbf{s}'_{t+1, i} \sim \text{Bernoulli}(0.5)
+$$\mathbf{s}'_{t+1, i} \sim \text{Bernoulli}(0.5)$$
 
 
 .. code-block:: python
@@ -145,13 +94,10 @@ To keep things simple, we'll always accept the new state.
 
 Our acceptance rule is to always accept the new state,
 
-.. math::
 
-    a(\mathbf{s}_{t+1} \vert \mathbf{s}'_{t+1}, \mathbf{s}_{t}) = \delta(\mathbf{s}_{t+1} - \mathbf{s}'_{t+1})
+$$a(\mathbf{s}_{t+1} \vert \mathbf{s}'_{t+1}, \mathbf{s}_{t}) = \delta(\mathbf{s}_{t+1} - \mathbf{s}'_{t+1})$$
 
-.. math::
-
-    \mathbf{s}_{t+1} = \mathbf{s}'_{t+1}
+$$\mathbf{s}_{t+1} = \mathbf{s}'_{t+1}$$
 
 .. code-block:: python
 
