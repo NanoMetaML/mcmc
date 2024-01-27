@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. image:: /docs/source/_static/logo.svg
+.. image:: /docs/source/_static/logo.png
   :align: center
   :width: 100
   :alt: nanomcmc logo 
