@@ -46,12 +46,11 @@ def create_low_res_poly_bitmap(image_path, width, height):
     return low_res_img
 
 
-def collect():
+def collect(t=1.0):
     """
     Main function for test.py
 
     """
-    import matplotlib.pyplot as plt
     import numpy as np
 
     w = 12
@@ -61,24 +60,16 @@ def collect():
 
     n = w * h
 
-    b = 1
+    b = 100_000
     s = 500  # number of steps
-    device = "cpu"
+    device = "cuda"
 
     arr = np.zeros((w, h), dtype=np.float32)
 
     terms = {}
     for i in range(w):
         for j in range(h):
-            if (i + j) % 2 == 0:
-                terms[(i * h + j,)] = -1.0
-                arr[i, j] = 0.0
-            else:
-                terms[(i * h + j,)] = 1.0
-                arr[i, j] = 1.0
-
-    plt.imshow(arr)
-    plt.show()
+            terms[(i * h + j,)] = img[j, i].item() / 255.0
 
     # num_terms = [n] * d
 
@@ -95,13 +86,17 @@ def collect():
         proposer=proposer,
         energy_fn=lambda x: -1 * poly(x),
         steps=s,
-        temperature=0.0001,
+        temperature=t,
     )
 
-    return uniformBoltzmann.validate(x)
+    y = uniformBoltzmann(x)
+    return torch.mean(y, dim=0)
 
 
 if __name__ == "__main__":
-    p = collect()
+    p = []
+    for t in [0.01, 0.1, 1.0, 10, 100, 1000]:
+        print(f"Temperature {t}")
+        p.append(collect(t))
     torch.save(p, "./test/gifs/sampled_vecs.npy")
     exit(0)
