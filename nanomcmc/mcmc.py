@@ -64,7 +64,9 @@ class MCMCLayer(torch.nn.Module):
         return s
 
     @beartype
-    def validate(self, s: "torch.Tensor", steps=None) -> Dict[str, "torch.Tensor"]:
+    def validate(
+        self, s: "torch.Tensor", steps=None, log=False
+    ) -> Dict[str, "torch.Tensor"]:
         """
         Runs the MCMC chain for the specified number of steps and returns
         a batched list of tensors of all states and proposed states.

@@ -16,7 +16,6 @@ def batchedProbAccept(s: "torch.Tensor", s_p: "torch.Tensor", probFn: Callable):
     p_change = probFn(s, s_p)
 
     accept = torch.bernoulli(p_change)
-    accept = accept.unsqueeze(1)
 
     s = torch.where(torch.gt(accept.detach(), 0), s_p, s)
 
