@@ -22,7 +22,12 @@ def stringToUint(bitstring_tensor: "torch.Tensor", basis: int = 2):
 
     # Create a tensor of powers of the basis
     powers = torch.pow(
-        basis * torch.ones_like(reversed_tensor), torch.arange(reversed_tensor.size(-1))
+        basis * torch.ones_like(reversed_tensor),
+        torch.arange(
+            reversed_tensor.size(-1),
+            device=reversed_tensor.device,
+            dtype=reversed_tensor.dtype,
+        ),
     )
 
     # Perform element-wise multiplication and sum to get the integer value
