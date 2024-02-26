@@ -38,10 +38,12 @@ class TransitionMatrix:
 
     def __call__(self, s: "torch.Tensor") -> "torch.Tensor":
         # Converts to element index for transition matrix
+        dtype = s.dtype
+
         s = self.toMatElem(s)
 
         # Samples state row
         s_sample = self.tMatrix[s]
         s_next = torch.distributions.OneHotCategorical(probs=s_sample).sample()
         s_label = torch.argmax(s_next, dim=-1)
-        return self.fromMatElem(s_label)
+        return self.fromMatElem(s_label).to(dtype)
