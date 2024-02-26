@@ -74,4 +74,4 @@ def uintToString(uint_tensor: "torch.Tensor", num_bits: int, basis: int = 2):
 
         bitStringTensor[..., i] = div_tensor.squeeze()
 
-    return bitStringTensor
+    return bitStringTensor.to(dtype=dtype)
