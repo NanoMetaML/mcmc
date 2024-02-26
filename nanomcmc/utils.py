@@ -49,10 +49,15 @@ def uintToString(uint_tensor: "torch.Tensor", num_bits: int, basis: int = 2):
     """
 
     # Prepare powers of the basis
-    powers = torch.pow(basis * torch.ones(num_bits), torch.arange(num_bits - 1, -1, -1))
+    powers = torch.pow(
+        basis * torch.ones(num_bits).to(uint_tensor.device).to(uint_tensor.dtype),
+        torch.arange(num_bits - 1, -1, -1),
+    )
 
     # Prepare the output tensor
-    bitStringTensor = torch.zeros((*uint_tensor.shape[:-1], num_bits))
+    bitStringTensor = torch.zeros(
+        (*uint_tensor.shape[:-1], num_bits), device=uint_tensor.device
+    ).to(dtype=uint_tensor.dtype)
 
     # Process each integer in the batch
     for i in range(num_bits):
