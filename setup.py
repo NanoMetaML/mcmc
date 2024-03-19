@@ -22,9 +22,9 @@ setup(
     packages=find_packages(),
     scripts=[],
     install_requires=[
-        "beartype>=0.16.4",
-        "numpy>=1.25.0",
-        "torch>=2.0.0",
+        "beartype",
+        "numpy",
+        "torch",
     ],
     include_package_data=True,
     zip_safe=False,
